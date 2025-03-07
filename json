@@ -1,0 +1,23 @@
+import pandas as pd
+import json
+
+
+file_path = "/content/json_in_csv.csv"  
+df = pd.read_csv(file_path)
+
+print(df.head())
+
+# Convert JSON strings in column 'json colum' to Python lists
+df["data (JSON)"] = df["json file column"].apply(json.loads)
+
+# Expand lists into separate rows
+df_exploded = df.explode("json file column)")
+
+# Convert dictionary values into separate columns
+df_final = pd.concat([df_exploded.drop(columns=["data (JSON)"]), df_exploded["data (JSON)"].apply(pd.Series)], axis=1)
+
+
+print(df_final)
+
+output_file = "output.csv"
+df_final.to_csv(output_file, index=False)
